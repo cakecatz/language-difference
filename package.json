@@ -1,0 +1,16 @@
+{
+  "name": "language-difference",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "compile": "browserify -t coffeeify ./src/app.coffee > ./public/js/bundle.js ",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run compile && http-server"
+  },
+  "author": "Ryo Narita <info@codedoc.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "highlight.js": "^8.4.0"
+  }
+}

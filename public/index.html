@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf8" />
+  <title>Language Difference</title>
+  <link rel="stylesheet" href="./css/kube.min.css" />
+  <link rel="stylesheet" href="./css/common.css" />
+  <link rel="stylesheet" href="./css/tomorrow-night.css" />
+  <script src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.min.js"></script>
+</head>
+<body>
+  <nav class="navbar nav-fullwidth">
+    <ul>
+      <li><a href="#">Language Difference</a></li>
+      <li><a href="#">Edit</a><li>
+    </ul>
+  </nav>
+
+  <div class="units-row code-panel">
+    <div class="left-code unit-50 units-row units-split">
+      <div class="unit-10 number-column"></div>
+      <div class="unit-90 code-column"></div>
+    </div>
+
+    <div class="right-code unit-50 units-row units-split">
+      <div class="unit-10 number-column"></div>
+      <div class="unit-90 code-column"></div>
+    </div>
+  </div>
+
+  <div id="language-selector">
+    <span>Rust</span>
+    <span>C</span>
+    <span>C++</span>
+    <span>C#</span>
+    <span>D</span>
+    <span>JavaScript</span>
+    <span>Perl</span>
+    <span>Ruby</span>
+    <span>bash</span>
+  </div>
+
+  <script sec="./js/kube.min.js"></script>
+  <script src="./js/bundle.js"></script>
+
+  <script>
+    var reqListener = function(lang, pos){
+      return function() {
+        var panel = document.querySelector('.' + pos + '-code .code-column');
+        while (panel.firstChild) {
+          panel.removeChild(panel.firstChild);
+        }
+        var o = langDiff.translate( pos, lang, JSON.parse(this.responseText) );
+        panel.insertAdjacentHTML('beforeend', o.body );
+
+        document.querySelector('.' + pos + '-code .number-column').
+          insertAdjacentHTML('beforeend', o.numberBody);
+        hljs.highlightBlock( document.querySelector('#' + o.id) );
+        hljs.highlightBlock( document.querySelector('#' + o.id + '-number') );
+        console.log(panel);
+        document.querySelector('.' + pos + '-code').insertAdjacentHTML('afterbegin',
+          '<h3><span class="language-name">' + lang + '</span></h3>');
+        languSelectorEvent();
+      }
+    };
+
+    var changeLang = function(lang, pos) {
+      var oReq = new XMLHttpRequest();
+      oReq.onload = reqListener(lang, pos);
+      oReq.open("get", "/code/" + lang + ".json", true);
+      oReq.send();
+    };
+
+  </script>
+  <script>
+    var languSelectorEvent = function() {
+      var languageNames = document.querySelectorAll('span.language-name');
+      var languageSelector = document.getElementById('language-selector');
+
+      for (var i=0;i < languageNames.length;++i ) {
+        languageNames[i].onclick = function() {
+          languageSelector.style.display = 'initial';
+          languageSelector.style.left = this.getBoundingClientRect().left + 'px';
+          languageSelector.style.top = this.getBoundingClientRect().bottom + 'px';
+        };
+      }
+
+      languageSelector.onclick = function() {
+        this.style.display = 'none';
+      };
+
+    };
+  </script>
+  <script>
+  // init
+  (function(){
+    changeLang('Rust', 'left');
+    changeLang('C', 'right');
+  })();
+  </script>
+</body>
+</html>

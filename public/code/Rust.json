@@ -1,0 +1,13 @@
+[
+"# main function",
+"fn main() {",
+"  let one = 1;",
+"  let mut thisIsTrue = true;",
+"  thisIsTrue = false;",
+"  if thisIsTrue != true {",
+"    println!(\"value is modified\");",
+"  }",
+"",
+"  println!(\"Good bye!\");",
+"}"
+]
