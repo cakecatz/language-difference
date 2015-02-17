@@ -5,12 +5,18 @@
   "main": "index.js",
   "scripts": {
     "compile": "browserify -t coffeeify ./src/app.coffee > ./public/js/bundle.js ",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run compile && http-server"
+    "conv": "coffee ./src/code2json.coffee ./code/c.c > ./public/code/c.json",
+    "test": "jasmine-node --coffee ./spec/",
+    "start": "npm run compile && gulp && http-server",
+    "debug": "coffee ./src/debug.coffee"
   },
   "author": "Ryo Narita <info@codedoc.net>",
   "license": "MIT",
   "devDependencies": {
+    "coffee-script": "^1.9.0",
+    "gulp": "^3.8.11",
+    "gulp-coffee": "^2.3.1",
+    "gulp-foreach": "^0.1.0",
     "highlight.js": "^8.4.0"
   }
 }

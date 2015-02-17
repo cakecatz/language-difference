@@ -5,24 +5,26 @@
   <title>Language Difference</title>
   <link rel="stylesheet" href="./css/kube.min.css" />
   <link rel="stylesheet" href="./css/common.css" />
-  <link rel="stylesheet" href="./css/tomorrow-night.css" />
+  <link rel="stylesheet" href="./css/tomorrow-night-eighties.css" />
   <script src="//cdn.jsdelivr.net/velocity/1.2.1/velocity.min.js"></script>
 </head>
 <body>
   <nav class="navbar nav-fullwidth">
     <ul>
-      <li><a href="#">Language Difference</a></li>
+      <li><a href="#" style="font-size: 23px;">LangDiff</a></li>
       <li><a href="#">Edit</a><li>
     </ul>
   </nav>
 
   <div class="units-row code-panel">
     <div class="left-code unit-50 units-row units-split">
+      <h3><span class="language-name"></span></h3>
       <div class="unit-10 number-column"></div>
       <div class="unit-90 code-column"></div>
     </div>
 
     <div class="right-code unit-50 units-row units-split">
+      <h3><span class="language-name"></span></h3>
       <div class="unit-10 number-column"></div>
       <div class="unit-90 code-column"></div>
     </div>
@@ -46,20 +48,29 @@
   <script>
     var reqListener = function(lang, pos){
       return function() {
-        var panel = document.querySelector('.' + pos + '-code .code-column');
-        while (panel.firstChild) {
-          panel.removeChild(panel.firstChild);
+        var codeColumn = document.querySelector('.' + pos + '-code .code-column');
+        var numberColumn = document.querySelector('.' + pos + '-code .number-column');
+
+        while (codeColumn.firstChild) {
+          codeColumn.removeChild(codeColumn.firstChild);
         }
+
+        while (numberColumn.firstChild) {
+          numberColumn.removeChild(numberColumn.firstChild);
+        }
+
         var o = langDiff.translate( pos, lang, JSON.parse(this.responseText) );
-        panel.insertAdjacentHTML('beforeend', o.body );
+        codeColumn.insertAdjacentHTML('beforeend', o.body );
 
         document.querySelector('.' + pos + '-code .number-column').
           insertAdjacentHTML('beforeend', o.numberBody);
+
+
+        console.log(document.querySelector('#' + o.id));
         hljs.highlightBlock( document.querySelector('#' + o.id) );
         hljs.highlightBlock( document.querySelector('#' + o.id + '-number') );
-        console.log(panel);
-        document.querySelector('.' + pos + '-code').insertAdjacentHTML('afterbegin',
-          '<h3><span class="language-name">' + lang + '</span></h3>');
+
+        document.querySelector('.' + pos + '-code .language-name').textContent = lang;
         languSelectorEvent();
       }
     };
@@ -67,25 +78,37 @@
     var changeLang = function(lang, pos) {
       var oReq = new XMLHttpRequest();
       oReq.onload = reqListener(lang, pos);
-      oReq.open("get", "/code/" + lang + ".json", true);
+      oReq.open("get", "/code/" + lang.toLowerCase() + ".json", true);
       oReq.send();
     };
 
   </script>
   <script>
     var languSelectorEvent = function() {
-      var languageNames = document.querySelectorAll('span.language-name');
-      var languageSelector = document.getElementById('language-selector');
+      var langNames = document.querySelectorAll('span.language-name');
+      var langSelector = document.getElementById('language-selector');
+      var langSelectorLabel = document.querySelectorAll('#language-selector span');
 
-      for (var i=0;i < languageNames.length;++i ) {
-        languageNames[i].onclick = function() {
-          languageSelector.style.display = 'initial';
-          languageSelector.style.left = this.getBoundingClientRect().left + 'px';
-          languageSelector.style.top = this.getBoundingClientRect().bottom + 'px';
+      for (var i=0;i < langNames.length;++i ) {
+        langNames[i].onclick = function() {
+          langSelector.style.display = 'initial';
+          langSelector.style.left = this.getBoundingClientRect().left + 'px';
+          langSelector.style.top = this.getBoundingClientRect().bottom + 'px';
+          if (window.innerWidth / 2 > this.getBoundingClientRect().left) {
+            langSelector.pos = 'left';
+          } else {
+            langSelector.pos = 'right';
+          }
         };
       }
 
-      languageSelector.onclick = function() {
+      for (var i=0;i < langSelectorLabel.length;++i ) {
+        langSelectorLabel[i].onclick = function() {
+          changeLang(this.textContent, this.parentNode.pos);
+        };
+      }
+
+      langSelector.onclick = function() {
         this.style.display = 'none';
       };
 
