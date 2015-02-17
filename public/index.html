@@ -76,10 +76,11 @@
     };
 
     var changeLang = function(lang, pos) {
-      var oReq = new XMLHttpRequest();
-      oReq.onload = reqListener(lang, pos);
-      oReq.open("get", "/code/" + lang.toLowerCase() + ".json", true);
-      oReq.send();
+      var req = new XMLHttpRequest();
+      req.onload = reqListener(lang, pos);
+      req.open("get", "/code/" + lang.toLowerCase() + ".json", true);
+      req.setRequestHeader('Cache-Control', 'no-cache');
+      req.send();
     };
 
   </script>
