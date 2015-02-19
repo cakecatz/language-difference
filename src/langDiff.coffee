@@ -4,7 +4,7 @@ langDiff = {
 
     contentBody = ''
     lineNumbers = ''
-    
+
     for line, i in codeLines
       lineNumbers += langDiff.lineNumber(i + 1)
       contentBody += line + "\n"
@@ -26,10 +26,9 @@ langDiff = {
     }
 
   lineNumber: (number)->
-    body = '<div class="line-number">'
-    for i in [0...(5 - number.toString().length)]
-      body += ' '
-    return body + number + ' </div>'
+    return @tag 'div', number + '|', {
+      class: 'line-number'
+    }
 
   resolveName: (name)->
     switch name

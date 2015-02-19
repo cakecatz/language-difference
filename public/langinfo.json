@@ -1,0 +1,6 @@
+{
+  "c": {"url": "http://www.open-std.org/jtc1/sc22/wg14/"},
+  "rust": {"url": "http://www.rust-lang.org"},
+  "php": {"url": "http://php.net"},
+  "javascript": {"url": "http://www.ecma-international.org/publications/standards/Ecma-262.htm"}
+}

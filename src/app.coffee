@@ -1,7 +1,7 @@
 hljs = require 'highlight.js'
 langDiff = require './langDiff.coffee'
 
-app = {
+window.app = {
   reqListener: (lang, pos)->
     return ->
       codeColumn = document.querySelector '.' + pos + '-code .code-column'
@@ -23,6 +23,14 @@ app = {
       hljs.highlightBlock document.querySelector('#' + o.id + '-number')
 
       document.querySelector('.' + pos + '-code .language-name').textContent = lang
+      langSiteElem = document.querySelector('.' + pos + '-code .language-site')
+      langSiteElem.removeChild langSiteElem.firstChild if langSiteElem.firstChild
+
+      langSiteElem.insertAdjacentHTML 'beforeend', langDiff.tag 'a', 'OFFICIAL SITE', {
+          href: app.langInfo[lang.toLowerCase()].url
+          target: "languageSite"
+        }
+
       app.languSelectorEvent()
 
   changeLang: (lang, pos)->
@@ -54,7 +62,18 @@ app = {
     langSelector.onclick = ->
       this.style.display = 'none'
 
+  loadLanguageInfo: ->
+    req = new XMLHttpRequest()
+    req.onload = ->
+      app.langInfo = JSON.parse @response
+    req.open 'get', "./langinfo.json", true
+    req.setRequestHeader 'Cache-Control', 'no-cache'
+    req.send()
+
+  langInfo: {}
+
   init: ->
+    @loadLanguageInfo()
     @changeLang 'Rust', 'left'
     @changeLang 'C', 'right'
 
